@@ -7,11 +7,19 @@ from random import randrange
 # Note: in FastAPI the order matter. So, if you don't name your path it will take the first one that matches the request
 # being made
 
+# VARIABLES:
 # Creating an instance of fastapi
 app = FastAPI()
+post_list =[{"title": "title of post 1", "content": "content of post 1", "id": 1}]
 
-my_posts =[{"title": "title of post 1", "content": "content of post 1", "id": 1}]
+# SEPARATED FUNCTIONS:
+# Basic search
+def find_post(id):
+    for p in post_list:
+        if p["id"] == id:
+             return p
 
+# ROUTES:
 # FastAPI changes this masssage to JSON
 @app.get("/")
 
@@ -24,7 +32,7 @@ def root():
 
 def get_posts():
 
-    return {"data": my_posts} # JSON Format
+    return {"data": post_list} # JSON Format
 
 
 #Let's create posts
@@ -41,7 +49,7 @@ def create_posts(post: Post):
 
     # Make this new id key have random value
     post_dict['id'] = randrange(0, 100000000)
-    my_posts.append(post_dict)
+    post_list.append(post_dict)
 
     return{"data": post_dict}
 
