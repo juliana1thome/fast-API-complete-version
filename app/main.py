@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException
-from post_format import Post
+from app.post_format import Post
 from random import randrange
 
 # from fastapi.params import Body
@@ -10,14 +10,17 @@ from random import randrange
 # VARIABLES:
 # Creating an instance of fastapi
 app = FastAPI()
-post_list =[{"title": "title of post 1", "content": "content of post 1", "id": 1}]
+post_list = [{"title": "title of post 1", "content": "content of post 1", "id": 1}]
+
 
 # SEPARATED FUNCTIONS:
 # Basic search
 def post_search(id):
+
     for p in post_list:
         if p["id"] == id:
-             return p
+            return p
+
 
 # Search for array index by Id
 def index_serch(id):
@@ -38,10 +41,10 @@ def root():
 @app.get("/posts")
 def get_posts():
 
-    return {"data": post_list} # JSON Format
+    return {"data": post_list}  # JSON Format
 
 
-#Let's create posts
+# Let's create posts
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 # Body extracts all of the filds from the body, after it converts it to a python dict, and saves it into this
 # class called Post that comes from the file post.py(which was a variable before, called body_data)
@@ -60,7 +63,7 @@ def create_posts(post: Post):
 
 # Retriving one individual post
 @app.get("/posts/{id}")
-def get_post(id: int, response: Response): # FastAPI is validating the id for me ;)
+def get_post(id: int, response: Response):  # FastAPI is validating the id for me ;)
 
     # print(int(id))
 
@@ -76,17 +79,19 @@ def get_post(id: int, response: Response): # FastAPI is validating the id for me
 
     return {"post_detail": post}
 
+
 # Delete Request
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, response: Response):
     # Find the index of this id in my array to pop it out
     index = index_serch(id)
 
-    if index == None:
+    if index is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
 
     post_list.pop(index)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 
 # Update Request
 @app.put("/posts/{id}")
@@ -96,7 +101,7 @@ def update_post(id: int, post: Post, response: Response):
     index = index_serch(id)
 
     # Check if it exists
-    if index == None:
+    if index is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
 
     # If it exists create the update for the post
