@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status, HTTPException
 from post_format import Post
 from random import randrange
 
@@ -14,10 +14,17 @@ post_list =[{"title": "title of post 1", "content": "content of post 1", "id": 1
 
 # SEPARATED FUNCTIONS:
 # Basic search
-def find_post(id):
+def post_search(id):
     for p in post_list:
         if p["id"] == id:
              return p
+
+# Search for array index by Id
+def index_serch(id):
+    for index, post in enumerate(post_list):
+        if post['id'] == id:
+            return index
+
 
 # ROUTES:
 # FastAPI changes this masssage to JSON
@@ -26,6 +33,7 @@ def find_post(id):
 def root():
 
     return{"message": "ʕ•́ᴥ•̀ʔっWelcome to Juliana's API"}
+
 
 # To retrive data use post request
 @app.get("/posts")
@@ -36,11 +44,9 @@ def get_posts():
 
 
 #Let's create posts
-@app.post("/posts")
-
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
 # Body extracts all of the filds from the body, after it converts it to a python dict, and saves it into this
 # class called Post that comes from the file post.py(which was a variable before, called body_data)
-
 def create_posts(post: Post):
 
     # print(post) # Check the terminal for this print
@@ -56,7 +62,30 @@ def create_posts(post: Post):
 
 # Retriving one individual post
 @app.get("/posts/{id}")
-def get_post(id):
-    print(id)
+def get_post(id: int, response: Response): # FastAPI is validating the id for me ;)
 
-    return {"post_detail": f"This is the post {id}"}
+    # print(int(id))
+
+    post = post_search(int(id))
+
+    # Throw a 404 error and change the error code
+    if not post:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} was not found")
+
+        # Hard code the Raise exception ↓
+        # response.status_code = status.HTTP_404_NOT_FOUND
+        # return {'message': f"post with id: {id} was not found"}
+
+    return {"post_detail": post}
+
+# Delete Request
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_post(id: int, response: Response):
+    # Find the index of this id in my array to pop it out
+    index = index_serch(id)
+
+    if index == None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
+
+    post_list.pop(index)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
