@@ -29,7 +29,6 @@ def index_serch(id):
 # ROUTES:
 # FastAPI changes this masssage to JSON
 @app.get("/")
-
 def root():
 
     return{"message": "ʕ•́ᴥ•̀ʔっWelcome to Juliana's API"}
@@ -37,7 +36,6 @@ def root():
 
 # To retrive data use post request
 @app.get("/posts")
-
 def get_posts():
 
     return {"data": post_list} # JSON Format
@@ -89,3 +87,23 @@ def delete_post(id: int, response: Response):
 
     post_list.pop(index)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+# Update Request
+@app.put("/posts/{id}")
+def update_post(id: int, post: Post, response: Response):
+
+    # Search for the post's id that I want to change
+    index = index_serch(id)
+
+    # Check if it exists
+    if index == None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
+
+    # If it exists create the update for the post
+    post_dict = post.dict()
+    # Make this new creation have the id that I want to change
+    post_dict['id'] = id
+    # Change the serach found post for this "new post" that I created to replace this old one
+    post_list[index] = post_dict
+
+    return {"data": post_dict}
