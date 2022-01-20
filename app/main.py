@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response, status, HTTPException
-from app.post_format import Post
+from .post_format import Post
 from random import randrange
+from .database_connect import connect
 
 # from fastapi.params import Body
 
@@ -12,6 +13,8 @@ from random import randrange
 app = FastAPI()
 post_list = [{"title": "title of post 1", "content": "content of post 1", "id": 1}]
 
+# Connect to the DB
+connect()
 
 # SEPARATED FUNCTIONS:
 # Basic search

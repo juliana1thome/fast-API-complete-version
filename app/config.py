@@ -1,8 +1,8 @@
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseSettings
 
-# Also, it performs an validation
+# Also, it performs validation
 class Settings(BaseSettings):
-    MY_DB_PASSW: int
+    db_passw: str
 
     class Config:
         env_file = ".env"
