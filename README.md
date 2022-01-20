@@ -17,7 +17,7 @@
 
   To start your server: uvicorn '<'project-name'>':'<'path-operation-name'>' 
 
-### Exemple:
+### Example:
 
   uvicorn app.main:app --reload (this will make that everytime you change something in your api you won't need to reload the server to check the change)
 

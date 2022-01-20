@@ -3,7 +3,7 @@ from psycopg2.extras import RealDictCursor
 import time
 from .config import settings
 
-def connect():
+class Connect():
     while True:
         try:
             # Connect to an existing database
@@ -19,3 +19,5 @@ def connect():
             print("Error: ", error)
             time.sleep(5)
 
+
+connect = Connect()

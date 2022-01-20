@@ -13,24 +13,7 @@ from .database_connect import connect
 app = FastAPI()
 post_list = [{"title": "title of post 1", "content": "content of post 1", "id": 1}]
 
-# Connect to the DB
-connect()
-
 # SEPARATED FUNCTIONS:
-# Basic search
-def post_search(id):
-
-    for p in post_list:
-        if p["id"] == id:
-            return p
-
-
-# Search for array index by Id
-def index_serch(id):
-    for index, post in enumerate(post_list):
-        if post['id'] == id:
-            return index
-
 
 # ROUTES:
 # FastAPI changes this masssage to JSON
@@ -43,34 +26,38 @@ def root():
 # To retrive data use post request
 @app.get("/posts")
 def get_posts():
-
-    return {"data": post_list}  # JSON Format
+    connect.cursor.execute("""SELECT * FROM posts""")
+    posts = connect.cursor.fetchall()
+    print(posts)
+    return {"data": posts}  # JSON Format
 
 
 # Let's create posts
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-# Body extracts all of the filds from the body, after it converts it to a python dict, and saves it into this
-# class called Post that comes from the file post.py(which was a variable before, called body_data)
 def create_posts(post: Post):
 
-    # print(post) # Check the terminal for this print
-    # print (post.dict()) # Transforming my pydantic model into a dict
-    post_dict = post.dict()
+    # WHY NOT: cursor.execute(f"INSERT INTO posts (title, content, published) VALUES({post.title}, {post.content},
+    # {post.published})") ?
+    # Because it is vunerable to SQL injection. For example, if in the title the user decide to pass a sql statement you
+    # will be vunerable to that ;)
+    # So to sanitize the input use the %s
+    connect.cursor.execute("""INSERT INTO posts (title, content, published) VALUES (%s, %s, %s)""", (post.title, post.content, post.published))
 
-    # Make this new id key have random value
-    post_dict['id'] = randrange(0, 100000000)
-    post_list.append(post_dict)
+    # To return the value added just fetch it and return it later
+    new_post = connect.cursor.fetchone
 
-    return{"data": post_dict}
+    connect.conn.commit()
+
+    # TODO: figure it out why it works but does not show up the new_post :?
+    return{"data": new_post}
 
 
 # Retriving one individual post
 @app.get("/posts/{id}")
 def get_post(id: int, response: Response):  # FastAPI is validating the id for me ;)
 
-    # print(int(id))
-
-    post = post_search(int(id))
+    connect.cursor.execute("""SELECT * FROM posts WHERE id = %s""", (str(id),))
+    post = connect.cursor.fetchone()
 
     # Throw a 404 error and change the error code
     if not post:
@@ -86,13 +73,15 @@ def get_post(id: int, response: Response):  # FastAPI is validating the id for m
 # Delete Request
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, response: Response):
-    # Find the index of this id in my array to pop it out
-    index = index_serch(id)
 
-    if index is None:
+    connect.cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
+    deleted_post = connect.cursor.fetchone()
+
+    connect.conn.commit()
+
+    if deleted_post is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
 
-    post_list.pop(index)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -100,18 +89,13 @@ def delete_post(id: int, response: Response):
 @app.put("/posts/{id}")
 def update_post(id: int, post: Post, response: Response):
 
-    # Search for the post's id that I want to change
-    index = index_serch(id)
+    connect.cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""", (post.title, post.content, post.published, str(id),))
+    updated_post = connect.cursor.fetchone()
+
+    connect.conn.commit()
 
     # Check if it exists
-    if index is None:
+    if updated_post is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
 
-    # If it exists create the update for the post
-    post_dict = post.dict()
-    # Make this new creation have the id that I want to change
-    post_dict['id'] = id
-    # Change the serach found post for this "new post" that I created to replace this old one
-    post_list[index] = post_dict
-
-    return {"data": post_dict}
+    return {"data": updated_post}
