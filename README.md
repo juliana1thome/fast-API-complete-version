@@ -1,8 +1,14 @@
+# Main Idea:
+
+This project is suppose to be an "Social Media". But, let's be honest it is an
+API with no front-end code ¯\_(ツ)_/¯ because I just want to practice some
+back-end (◕‿◕)♡ Therefore, I gave this brillian name, Fake Social Media (￢‿￢)
+
 # How to start this project:
 
   - To create you virtual env: python3 -m venv '<'name'>'
 
-  - To activate your VENV: spurce '<'VENV-name'>'/bin/activate
+  - To activate your VENV: source '<'VENV-name'>'/bin/activate
 
   - Install fastapi: pip install fastapi[all]
 
@@ -19,7 +25,7 @@
 
   uvicorn app.main:app --reload (this will make that everytime you change something in your api you won't need to reload the server to check the change)
 
-## Some Instructions to test:
+## Some Instructions to test it out:
 
   After doing this and checking the code, you can run your server and go to
 route /docs to perform some requests, or you can use postman, or if you preferer
