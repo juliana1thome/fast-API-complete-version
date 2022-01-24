@@ -1,5 +1,3 @@
-# fast-API-complete-version
-
 # How to start this project:
 
   - To create you virtual env: python3 -m venv '<'name'>'
@@ -46,4 +44,27 @@ The relational database management system used is PostgreSQL
   - To check status: sudo service postgresql status
 
   - To stop: sudo service postgresql stop
+
+## ENV:
+  
+  - To set a ENV variable type: export MY_ENV_VARIABLE='whatever:value'
+
+  - To check all yours ENV variables: printenv
+
+  - To check just one ENV variables: echo $MY_ENV_VARIABLE
+
+## ORM:
+
+  - The ORM used in this project is SQLAlchemy
+
+  - Version used: 1.4
+
+  - To install: pip install sqlalchemy
+
+  - For more information to understand how this was used in the project check
+    this [link](https://fastapi.tiangolo.com/advanced/async-sql-databases/?h=sqlalche#import-and-set-up-sqlalchemy)
+
+## Password Hashing:
+
+  - To install passlib but with Bcrypt as the algorithm used: pip install passlib[bcrypt]
 
