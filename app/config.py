@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     db_username: str
     db_hostname: str
     db_name: str
+    algorithm: str
 
     class Config:
         env_file = ".env"

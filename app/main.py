@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-from .pydantic_model import Post
 from random import randrange
 from .database_connect import connect
-from . import models
+from . import models, pydantic_model, helpers
 from .database_handler import engine, get_db
 from sqlalchemy.orm import Session
+from typing import List
 
 # Create all my models
 models.Base.metadata.create_all(bind=engine)
@@ -23,7 +23,7 @@ def root():
 
 
 # To retrive data use post request
-@app.get("/posts")
+@app.get("/posts", response_model=List[pydantic_model.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
 
     # If you print this without this all method, you will see that this is just a sql command
@@ -33,11 +33,11 @@ def get_posts(db: Session = Depends(get_db)):
     # connect.cursor.execute("""SELECT * FROM posts""")
     # posts = connect.cursor.fetchall()
 
-    return {"data": posts}  # JSON Format
+    return posts
 
 
 # Retriving one individual post
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=pydantic_model.PostResponse)
 def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # FastAPI is validating the id for me ;)
 
     # .filter = WHERE in sql
@@ -59,12 +59,12 @@ def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # Fas
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {'message': f"post with id: {id} was not found"}
 
-    return {"post_detail": post}
+    return post
 
 
 # Let's create posts
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post, db: Session = Depends(get_db)):
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=pydantic_model.PostResponse)
+def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db)):
 
     # **post.dict() does the same as title=post.title, ... because it unpacks the dict and puts it in the same format as
     # what was before (title-post.title, content=post.content, ...)
@@ -87,7 +87,7 @@ def create_posts(post: Post, db: Session = Depends(get_db)):
     # new_post = connect.cursor.fetchone
     #connect.conn.commit()
 
-    return{"data": new_post}
+    return new_post
 
 
 # Delete Request
@@ -117,8 +117,8 @@ def delete_post(id: int, response: Response, db: Session = Depends(get_db)):
 
 
 # Update Request
-@app.put("/posts/{id}")
-def update_post(id: int, updated_post: Post, response: Response, db: Session = Depends(get_db)):
+@app.put("/posts/{id}", response_model=pydantic_model.PostResponse)
+def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Response, db: Session = Depends(get_db)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
@@ -138,4 +138,21 @@ def update_post(id: int, updated_post: Post, response: Response, db: Session = D
     post_query.update(updated_post.dict(), synchronize_session=False)
     db.commit()
 
-    return {"data": post_query.first()}
+    return post_query.first()
+
+
+# Handling requests for users table
+
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model = pydantic_model.UserResponse)
+def create_user(user: pydantic_model.UserCreate, db: Session = Depends(get_db)):
+    # Before creating the user you will need to hash the password
+    hashed_passw = helpers.hash(user.password)
+    # Now make it real :P
+    user.password = hashed_passw
+
+    new_user = models.User(**user.dict())  # Convert it to a dict and unpack it
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
