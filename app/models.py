@@ -3,6 +3,8 @@ from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 
+# This one is the SQL Alchemy model
+# And it defines how our database (the table) will look like
 class Post(Base):
     __tablename__ = "posts"
 

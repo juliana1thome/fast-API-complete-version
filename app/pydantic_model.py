@@ -6,7 +6,7 @@ from pydantic import BaseModel
 # new_post.title (check main.py file to understand where this new_post comes from)
 # Also, it performs an validation
 
-
+# This is my Pydantic model and it is for shape our request
 class Post(BaseModel):
     title: str
     content: str
