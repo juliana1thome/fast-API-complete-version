@@ -3,10 +3,13 @@ from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from ..database_handler import engine, get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix = "/users",  # So I don't need to keep adding the same route
+    tags = ['Users']  # To fix the documentation
+)
 
 
-@router.post("/users", status_code=status.HTTP_201_CREATED, response_model = pydantic_model.UserResponse)
+@router.post("/", status_code = status.HTTP_201_CREATED, response_model = pydantic_model.UserResponse)
 def create_user(user: pydantic_model.UserCreate, db: Session = Depends(get_db)):
     # Before creating the user you will need to hash the password
     hashed_passw = helpers.hash(user.password)
@@ -21,12 +24,12 @@ def create_user(user: pydantic_model.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get("/users/{id}", response_model=pydantic_model.UserResponse)
+@router.get("/{id}", response_model = pydantic_model.UserResponse)
 def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     # If not found:
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {id} does not exit")
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"User with id: {id} does not exit")
 
     return user

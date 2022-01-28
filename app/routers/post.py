@@ -4,11 +4,14 @@ from sqlalchemy.orm import Session
 from ..database_handler import engine, get_db
 from typing import List
 
-router = APIRouter()
+router = APIRouter(
+    prefix = "/posts",  # So I don't need to keep adding the same route
+    tags = ['Posts']  # To fix the documentation
+)
 
 
 # To retrive data use post request
-@router.get("/posts", response_model=List[pydantic_model.PostResponse])
+@router.get("/", response_model = List[pydantic_model.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
 
     posts = db.query(models.Post).all()
@@ -17,7 +20,7 @@ def get_posts(db: Session = Depends(get_db)):
 
 
 # Retriving one individual post
-@router.get("/posts/{id}", response_model=pydantic_model.PostResponse)
+@router.get("/{id}", response_model = pydantic_model.PostResponse)
 def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # FastAPI is validating the id for me ;)
 
     post = db.query(models.Post).filter(models.Post.id == id).first()
@@ -30,7 +33,7 @@ def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # Fas
 
 
 # Let's create posts
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=pydantic_model.PostResponse)
+@router.post("/", status_code = status.HTTP_201_CREATED, response_model = pydantic_model.PostResponse)
 def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db)):
 
     # **post.dict() does the same as title=post.title, ... because it unpacks the dict and puts it in the same format as
@@ -47,7 +50,7 @@ def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db))
 
 
 # Delete Request
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code = status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, response: Response, db: Session = Depends(get_db)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
@@ -63,7 +66,7 @@ def delete_post(id: int, response: Response, db: Session = Depends(get_db)):
 
 
 # Update Request
-@router.put("/posts/{id}", response_model=pydantic_model.PostResponse)
+@router.put("/{id}", response_model = pydantic_model.PostResponse)
 def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Response, db: Session = Depends(get_db)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
