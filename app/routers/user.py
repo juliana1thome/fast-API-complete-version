@@ -12,9 +12,9 @@ router = APIRouter(
 @router.post("/", status_code = status.HTTP_201_CREATED, response_model = pydantic_model.UserResponse)
 def create_user(user: pydantic_model.UserCreate, db: Session = Depends(get_db)):
     # Before creating the user you will need to hash the password
-    hashed_passw = helpers.hash(user.password)
+    hashed_password = helpers.hash(user.password)
     # Now make it real :P
-    user.password = hashed_passw
+    user.password = hashed_password
 
     new_user = models.User(**user.dict())  # Convert it to a dict and unpack it
     db.add(new_user)
