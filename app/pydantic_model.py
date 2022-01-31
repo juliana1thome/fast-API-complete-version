@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from typing import Optional
 
 # Defining my schema
 # This makes you have a easier time extracting the data. So, you can only do this to extract title
@@ -54,3 +55,10 @@ class UserResponse(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class AccessToken(BaseModel):
+    access_toke: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str] = None

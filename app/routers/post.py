@@ -1,8 +1,11 @@
-from .. import models, pydantic_model, helpers
+from .. import models, pydantic_model, helpers, oauth2
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from ..database_handler import engine, get_db
 from typing import List
+
+# Note: if I want to the user to be loged in when doing something I can
+# just add a dependency in that request
 
 router = APIRouter(
     prefix = "/posts",  # So I don't need to keep adding the same route
@@ -34,8 +37,10 @@ def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # Fas
 
 # Let's create posts
 @router.post("/", status_code = status.HTTP_201_CREATED, response_model = pydantic_model.PostResponse)
-def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db)):
+def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db), user_id: int = Depends
+(oauth2.get_current_user)):
 
+    print(user_id)
     # **post.dict() does the same as title=post.title, ... because it unpacks the dict and puts it in the same format as
     # what was before (title-post.title, content=post.content, ...)
     new_post = models.Post(**post.dict())
