@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-SQLACHEMY_DATABASE_URL = f'postgresql://{settings.db_username}:{settings.db_passw}@{settings.db_hostname}/{settings.db_name}'
+SQLACHEMY_DATABASE_URL = f'postgresql://{settings.DB_USERNAME}:{settings.DB_PASSW}@{settings.DB_HOSTNAME}/{settings.DB_NAME}'
 
 
 # The engine is responsable for sqlalchemy to connect to postgresql

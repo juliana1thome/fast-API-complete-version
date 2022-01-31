@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlalchemy.orm import Session
-from .. import database_handler, pydantic_model, helpers, models
+from .. import database_handler, pydantic_model, helpers, models, oauth2
 
 router = APIRouter(tags = ['Authentication'])
 
@@ -17,7 +17,9 @@ def login(user_crendentials: pydantic_model.UserLogin, db: Session = Depends(dat
     if not helpers.verify(user_crendentials.password, user.password):
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"Invalid Crendentials")
 
-    # Add Creation of token
+    # Create the token
+    access_token = oauth2.create_access_token(data = {"user_id": user.id})
+
     # return it
-    return {'token': 'token'}
+    return {'access_token': access_token, "token_type": "bearer"}
 

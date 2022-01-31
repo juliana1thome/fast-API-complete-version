@@ -2,11 +2,14 @@ from pydantic import BaseSettings
 
 # Also, it performs validation
 class Settings(BaseSettings):
-    db_passw: str
-    db_username: str
-    db_hostname: str
-    db_name: str
-    algorithm: str
+    DB_PASSW: str
+    DB_USERNAME: str
+    DB_HOSTNAME: str
+    DB_NAME: str
+    ALGORITHM: str
+    JWT_ALGORITHM: str
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     class Config:
         env_file = ".env"

@@ -74,3 +74,8 @@ The relational database management system used is PostgreSQL
 
   - To install passlib but with Bcrypt as the algorithm used: pip install passlib[bcrypt]
 
+## JWT Token:
+
+  - To install python-jose to generate and verify JWT tokens: pip install
+    python-jose[cryptography]
+
