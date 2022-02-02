@@ -66,6 +66,10 @@ def delete_post(id: int, response: Response, db: Session = Depends(get_db), curr
     if post is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
 
+    # Check if this posts belongs to the user that is trying to delete
+    if post.fk_user_id != current_user.id:
+        raise HTTPException(status_code = status.HTTP_403_FORBIDDEN, detail = f"User not authorized to perform this request")
+
     post_query.delete(synchronize_session=False)
     db.commit()
 
@@ -83,6 +87,10 @@ def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Resp
     # Check if it exists
     if post is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id: {id} does not exist")
+
+    # Check if this posts belongs to the user that is trying to update
+    if post.fk_user_id != current_user.id:
+        raise HTTPException(status_code = status.HTTP_403_FORBIDDEN, detail = f"User not authorized to perform this request")
 
     post_query.update(updated_post.dict(), synchronize_session=False)
     db.commit()
