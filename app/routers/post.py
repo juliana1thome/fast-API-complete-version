@@ -56,7 +56,8 @@ def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db),
 
 # Delete Request
 @router.delete("/{id}", status_code = status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, response: Response, db: Session = Depends(get_db)):
+def delete_post(id: int, response: Response, db: Session = Depends(get_db), user_id: int = Depends
+(oauth2.get_current_user)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
@@ -72,7 +73,8 @@ def delete_post(id: int, response: Response, db: Session = Depends(get_db)):
 
 # Update Request
 @router.put("/{id}", response_model = pydantic_model.PostResponse)
-def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Response, db: Session = Depends(get_db)):
+def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Response, db: Session = Depends(get_db), user_id: int = Depends
+(oauth2.get_current_user)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()

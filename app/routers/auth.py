@@ -5,7 +5,7 @@ from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
 router = APIRouter(tags = ['Authentication'])
 
-@router.post('/login')
+@router.post('/login', response_model = pydantic_model.AccessToken)
 # This function will have 2 dependencies first one will be to retrive the crendentials which will be stored
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database_handler.get_db)):
 
