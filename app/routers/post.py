@@ -37,10 +37,10 @@ def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # Fas
 
 # Let's create posts
 @router.post("/", status_code = status.HTTP_201_CREATED, response_model = pydantic_model.PostResponse)
-def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db), user_id: int = Depends
+def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db), current_user: int = Depends
 (oauth2.get_current_user)):
 
-    print(user_id)
+    print(current_user.id)
     # **post.dict() does the same as title=post.title, ... because it unpacks the dict and puts it in the same format as
     # what was before (title-post.title, content=post.content, ...)
     new_post = models.Post(**post.dict())
@@ -56,7 +56,7 @@ def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db),
 
 # Delete Request
 @router.delete("/{id}", status_code = status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, response: Response, db: Session = Depends(get_db), user_id: int = Depends
+def delete_post(id: int, response: Response, db: Session = Depends(get_db), current_user: int = Depends
 (oauth2.get_current_user)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
@@ -73,7 +73,7 @@ def delete_post(id: int, response: Response, db: Session = Depends(get_db), user
 
 # Update Request
 @router.put("/{id}", response_model = pydantic_model.PostResponse)
-def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Response, db: Session = Depends(get_db), user_id: int = Depends
+def update_post(id: int, updated_post: pydantic_model.PostCreate, response: Response, db: Session = Depends(get_db), current_user: int = Depends
 (oauth2.get_current_user)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
