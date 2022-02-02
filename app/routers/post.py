@@ -40,10 +40,11 @@ def get_post(id: int, response: Response, db: Session = Depends(get_db)):  # Fas
 def create_posts(post: pydantic_model.PostCreate, db: Session = Depends(get_db), current_user: int = Depends
 (oauth2.get_current_user)):
 
-    print(current_user.id)
     # **post.dict() does the same as title=post.title, ... because it unpacks the dict and puts it in the same format as
     # what was before (title-post.title, content=post.content, ...)
-    new_post = models.Post(**post.dict())
+    # OBVIOUS NOTE: This fk_user_id = current_user.id
+    # is automatically saying to my db how is creating this post
+    new_post = models.Post(fk_user_id = current_user.id, **post.dict())
     # Add in the db
     db.add(new_post)
     # Commit your changes in the db

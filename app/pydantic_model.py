@@ -29,6 +29,7 @@ class PostResponse(PostBase):
 
     id: int
     created_at: datetime
+    fk_user_id: int
 
     # The pydantic model will only read if it is a dict
     # So, we need something to convert the SQLAlchemy model to Pydantic model
