@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
+from pydantic.types import conint
 
 # Defining my schema
 # This makes you have a easier time extracting the data. So, you can only do this to extract title
@@ -81,3 +82,16 @@ class AccessToken(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+ #######################
+ ### Schema for Love ###
+ #######################
+
+class Love(BaseModel):
+    post_id: int
+
+    # It can only be 0 or 1. So, 0 means no love and 1 means loved.
+    # It will be like this because I want the user to be able to like and dislike it after
+    dir: conint(le=1)
+
