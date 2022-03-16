@@ -17,6 +17,12 @@ def love(love: pydantic_model.Love, db: Session = Depends(get_db), current_user:
     love_query = db.query(models.Love).filter(models.Love.post_id == love.post_id, models.Love.user_id == current_user.id)
     found_love = love_query.first()
 
+    post = db.query(models.Post).filter(models.Post.id == love.post_id).first()
+
+    # Before anything, check if this post exists otherwise give an http exception
+    if not post:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Post with id: {love.post_id} does not exist")
+
     # If already found love
     if(love.dir == 1):
 
