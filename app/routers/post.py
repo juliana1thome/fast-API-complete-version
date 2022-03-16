@@ -2,7 +2,7 @@ from .. import models, pydantic_model, helpers, oauth2
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from ..database_handler import engine, get_db
-from typing import List
+from typing import List, Optional
 
 # Note: if I want to the user to be loged in when doing something I can
 # just add a dependency in that request
@@ -15,9 +15,9 @@ router = APIRouter(
 
 # To retrive data use post request
 @router.get("/", response_model = List[pydantic_model.PostResponse])
-def get_posts(db: Session = Depends(get_db)):
+def get_posts(db: Session = Depends(get_db), limit: int = 3, skip: int = 0, search: Optional[str] = ""):
 
-    posts = db.query(models.Post).all()
+    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
     return posts
 
