@@ -19,33 +19,16 @@ class PostBase(BaseModel):
     content: str
     published: bool = True # Default True
 
-
 class PostCreate(PostBase):
     pass
 
 
-# Shape of our Response (that is us passing data to the user)
-class PostResponse(PostBase):
+################################
+### Schema for UsersResponse ###
+################################
 
-    id: int
-    created_at: datetime
-    fk_user_id: int
-
-    # The pydantic model will only read if it is a dict
-    # So, we need something to convert the SQLAlchemy model to Pydantic model
-    class Config:
-        orm_mode = True
-
-########################
-### Schema for Users ###
-########################
-class UserCreate(BaseModel):
-    # For this to work you need to have email-validator installed
-    # To check if you have it does type pip freeze on your terminal
-    # Also this EmailStr does the email validation for me
-    email: EmailStr
-    password: str
-
+# This pydantic class is here now because since python reads top to bottom
+# It would have a problem when PostResponse class calls for it
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
@@ -53,9 +36,44 @@ class UserResponse(BaseModel):
     class Config:
         orm_mode = True
 
+
+###############################
+### Schema for PostResponse ###
+###############################
+
+# Shape of our Response (that is us passing data to the user)
+class PostResponse(PostBase):
+
+    id: int
+    created_at: datetime
+    fk_user_id: int
+    owner: UserResponse
+
+    # The pydantic model will only read if it is a dict
+    # So, we need something to convert the SQLAlchemy model to Pydantic model
+    class Config:
+        orm_mode = True
+
+
+########################
+### Schema for Users ###
+########################
+
+class UserCreate(BaseModel):
+    # For this to work you need to have email-validator installed
+    # To check if you have it does type pip freeze on your terminal
+    # Also this EmailStr does the email validation for me
+    email: EmailStr
+    password: str
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+########################
+### Schema for Token ###
+########################
 
 class AccessToken(BaseModel):
     access_token: str
