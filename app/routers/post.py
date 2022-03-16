@@ -3,6 +3,7 @@ from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from ..database_handler import engine, get_db
 from typing import List, Optional
+from sqlalchemy import func
 
 # Note: if I want to the user to be loged in when doing something I can
 # just add a dependency in that request
@@ -14,12 +15,21 @@ router = APIRouter(
 
 
 # To retrive data use post request
-@router.get("/", response_model = List[pydantic_model.PostResponse])
+@router.get("/", response_model = List[pydantic_model.PostLove])
 def get_posts(db: Session = Depends(get_db), limit: int = 3, skip: int = 0, search: Optional[str] = ""):
 
     posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
-    return posts
+    # Basicaly I'm creating a query that will get the amount of loves in a post
+    # By doing an count of loves based of an left outer join
+    # To check the query just print it
+    # For more information on how to do this query check
+    # https://helperbyte.com/questions/168146/sql-query-for-fetching-the-post-and-number-of-likes
+    # So, to achieve this I had to create an query that does what I want and them figure out a way to do this query
+    # using sqlalchemy
+    posts_loves = db.query(models.Post, func.count(models.Love.post_id).label("loves")).join(models.Love, models.Love.post_id == models.Post.id, isouter=True).group_by(models.Post.id).all()
+
+    return posts_loves
 
 
 # Retriving one individual post

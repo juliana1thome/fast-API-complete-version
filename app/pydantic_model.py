@@ -43,10 +43,13 @@ class UserResponse(BaseModel):
 ###############################
 
 # Shape of our Response (that is us passing data to the user)
-class PostResponse(PostBase):
+class PostResponse(BaseModel):
 
     id: int
+    content: str
     created_at: datetime
+    published: bool
+    title: str
     fk_user_id: int
     owner: UserResponse
 
@@ -55,6 +58,14 @@ class PostResponse(PostBase):
     class Config:
         orm_mode = True
 
+# To make the count of posts work I need to make the response be the same
+# As the schema that I will return. So, the pydantic model understands that there is nothing wrong
+class PostLove(BaseModel):
+    Post: PostResponse
+    loves: int
+
+    class Config:
+        orm_mode = True
 
 ########################
 ### Schema for Users ###
