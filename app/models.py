@@ -30,3 +30,12 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+# In order to handle votes/likes I need a table that will save this info, but it must have
+# A composite primary key
+# This table will be call Love instead of vote or like. Just because I prefere this name
+class Love(Base):
+    __tablename__ = "loves"
+
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True)
