@@ -79,3 +79,34 @@ The relational database management system used is PostgreSQL
   - To install python-jose to generate and verify JWT tokens: pip install
     python-jose[cryptography]
 
+## Database Migration Tool (Alembic):
+
+  - Link for the instructions on how to setup the migration environment:
+    https://alembic.sqlalchemy.org/en/latest/tutorial.html#the-migration-environment
+
+  - To install alembic 1.7.7: pip install alembic 
+
+  - For alembic help: alembic --help
+
+  - To create an alembic directory: alembic init (the name that you want for this)
+    -> it will create both alembic directory and an alembic ini file
+
+  - To create a new revision (what tracks the changes made on the DB(same idea as
+    commit used on git)): alembic revision -m "The message that you want to add"
+
+  - Note: the alembic revision will have an version file where you can add the
+    logic to upgrade or dowgrade the table in question. To know how to perform any
+    logic on this file visit this website:
+    https://alembic.sqlalchemy.org/en/latest/api/ddl.html#module-alembic.ddl.mysql 
+
+  - To see which version you are: alembic current
+
+  - To upgrade your alembic version: alembic upgrade (the version of the revision
+    that you want) -> when you do this it will create a table that will allow you to
+    keep check on the revisions
+
+  - To downgrade your alembic version: alembic downgrade -n (n is the numbers of
+    revisions you want to go under) or you can use just the revision
+
+  - To allow alembic to do everything for you just by getting your models from
+    sqlalchemy type: alembic revision --autogenerate -m "message"
