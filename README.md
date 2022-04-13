@@ -110,3 +110,12 @@ The relational database management system used is PostgreSQL
 
   - To allow alembic to do everything for you just by getting your models from
     sqlalchemy type: alembic revision --autogenerate -m "message"
+
+## Running in an isolated environment:
+
+  - Note: This application is missing the container for the PostgreSQL server to be
+    completely running in an isolated environment.
+
+  - But to run the app only in a container, you first must run this: make build
+
+  - And after, run this: make run
