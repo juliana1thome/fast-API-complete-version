@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# To run in the docker image
+# why use exec: https://hynek.me/articles/docker-signals/
+# The exec main idea is to be able to CTRL + C this process
+exec uvicorn app.main:app --host 0.0.0.0 --port ${APP_PORT}
