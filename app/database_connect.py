@@ -7,7 +7,7 @@ class Connect():
     while True:
         try:
             # Connect to an existing database
-            conn = psycopg2.connect(host = 'localhost', database = 'fastapi', user = 'fastapi', password = settings.DB_PASSW, cursor_factory = RealDictCursor)
+            conn = psycopg2.connect(host = settings.DB_HOSTNAME, database = settings.DB_NAME, user = settings.DB_USERNAME, password = settings.DB_PASSW, cursor_factory = RealDictCursor)
 
             # Open a cursor to perform database operations
             cursor = conn.cursor()
