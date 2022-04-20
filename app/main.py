@@ -4,7 +4,7 @@ from .database_handler import engine
 from .routers import post, user, auth, love
 
 # Create all my models -> no longer needed
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 # Creating an instance of fastapi
 app = FastAPI()
