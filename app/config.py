@@ -2,10 +2,6 @@ from pydantic import BaseSettings
 
 # Also, it performs validation
 class Settings(BaseSettings):
-    DB_PASSW: str
-    DB_USERNAME: str
-    DB_HOSTNAME: str
-    DB_NAME: str
     ALGORITHM: str
     JWT_ALGORITHM: str
     SECRET_KEY: str
