@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-SQLACHEMY_DATABASE_URL = settings.DATABASE_URL
+SQLACHEMY_DATABASE_URL = settings.DATABASE_URL.replace("://", "ql://", 1)
 
 
 # The engine is responsable for sqlalchemy to connect to postgresql
