@@ -10,13 +10,14 @@ if uri.startswith("postgres://"):
 
 SQLACHEMY_DATABASE_URL = uri
 
-# The engine is responsable for sqlalchemy to connect to postgresql
+# Creating an instance of a engine that is responsable for
+# SQLAlchemy to connect to postgresql
 engine = create_engine(SQLACHEMY_DATABASE_URL)
 
-# When you want to talk to the database you need a session
+# Create a session in order to communicate with the DB
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# All the models defined that create the tables in postgresql will be expending this base class ↓
+# This base class ↓ is extended by the app models
 Base = declarative_base()
 
 
