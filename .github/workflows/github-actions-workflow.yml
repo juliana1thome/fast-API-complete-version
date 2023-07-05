@@ -1,0 +1,42 @@
+name: Fake Social Media
+on: push
+jobs:
+  Example-Actions-Job:
+    name: Exploring GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      # Display which event was triggered the workflow
+      - run: echo "The job was triggered by a ${{ github.event_name }} event."
+
+      # Display runner information
+      - run: echo "Job now running on ${{ runner.os }} server hosted by GitHub"
+
+      # Display information about the repository and branch
+      - run: echo "Current branch and repository is named by ${{ github.ref }} and by ${{ github.repository }}by ${{ github.repository }}."
+    
+      # Use action from: https://github.com/actions
+      # TODO: update to version 3
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: conditional step when event name is pull request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "This is event is a Pull Request"
+
+      - name: List files in the repo
+        run: |
+          ls ${{ github.workspace }}
+    
+      - name: Setup dotnet on runner
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.x'
+
+      - name: Display dotnet version
+        run: dotnet --version
+
+      - name: List files in tool cache
+        run: |
+          ls ${{ runner.tool_cache }}
+
+      - run: echo "This job's status is ${{ job.status }}."
