@@ -45,7 +45,7 @@ jobs:
 
       - name: List files in tool cache
         run: |
-          pwd ${{ runner.tool_cache }}
+          ls ${{ runner.tool_cache }}
 
       - run: echo "This job's status is ${{ job.status }}."
 
