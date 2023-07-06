@@ -32,3 +32,4 @@ psycopg2-binary
 sqlalchemy
 passlib[bcrypt]
 python-jose[cryptography]
+pytest==4.6

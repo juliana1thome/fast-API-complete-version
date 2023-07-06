@@ -14,7 +14,6 @@ jobs:
       # Display information about the repository and branch
       - run: echo "Current branch and repository is named by ${{ github.ref }} and by ${{ github.repository }}by ${{ github.repository }}."
 
-      # Use action from: https://github.com/actions
       # TODO: update to version 3
       - name: Check out repository code
         uses: actions/checkout@v2
