@@ -27,18 +27,8 @@ jobs:
         run: |
           pwd ${{ github.workspace }}
 
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - run: python my_script.py
-
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-          cache: 'pip' # caching pip dependencies
-      - run: pip install -r requirements.txt
+      - name: Setup Python
+        uses: actions/setup-python@v3.1.4
 
       - name: Display dotnet version
         run: dotnet --version
