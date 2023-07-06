@@ -24,7 +24,7 @@ jobs:
 
       - name: List files in the repo
         run: |
-          pwd
+          ls
 
       - name: Setup Python
         uses: actions/setup-python@v3.1.4
