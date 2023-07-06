@@ -1,5 +1,5 @@
 name: Fake Social Media Actions
-on: [push, pull_request]
+on: push
 jobs:
   Example-Actions-Job:
     name: Exploring GitHub Actions
