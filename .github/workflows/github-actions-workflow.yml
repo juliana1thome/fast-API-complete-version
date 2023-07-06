@@ -1,8 +1,16 @@
-name: Fake Social Media Actions
-on: push
+name: Deploy Fake Social Media to Azure App Service
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  env:
+    AZURE_WEBAPP_PACKAGE_PATH: '.'
+    AZURE_WEBAPP_NAME: FakeSocialMediaDeploy
+
 jobs:
-  Example-Actions-Job:
-    name: Exploring GitHub Actions
+  CD:
     runs-on: ubuntu-latest
     steps:
       # Display which event was triggered the workflow
@@ -18,10 +26,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: conditional step when event name is pull request
-        if: ${{ github.event_name == 'pull_request' }}
-        run: echo "This is event is a Pull Request"
-
       - name: List files in the repo
         run: |
           ls
@@ -35,5 +39,16 @@ jobs:
       - name: List files in tool cache
         run: |
           ls ${{ runner.tool_cache }}
+
+      - name: Publish
+        run: python publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+
+      - name: Deploy
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: 'development'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
 
       - run: echo "This job's status is ${{ job.status }}."
