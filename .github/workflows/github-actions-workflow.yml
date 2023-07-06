@@ -24,13 +24,13 @@ jobs:
 
       - name: List files in the repo
         run: |
-          ls ${{ github.workspace }}
+          pwd
 
       - name: Setup Python
         uses: actions/setup-python@v3.1.4
 
-      - name: Display dotnet version
-        run: dotnet --version
+      - name: Display python version
+        run: python --version
 
       - name: List files in tool cache
         run: |
