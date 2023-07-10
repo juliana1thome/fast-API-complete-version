@@ -1,0 +1,54 @@
+name: Deploy Fake Social Media to Azure App Service
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  AZURE_WEBAPP_NAME: FakeSocialMediaDeploy
+
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+    steps:
+      # Display which event was triggered the workflow
+      - run: echo "The job was triggered by a ${{ github.event_name }} event."
+
+      # Display runner information
+      - run: echo "Job now running on ${{ runner.os }} server hosted by GitHub"
+
+      # Display information about the repository and branch
+      - run: echo "Current branch and repository is named by ${{ github.ref }} and by ${{ github.repository }}by ${{ github.repository }}."
+
+      # TODO: update to version 3
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: List files in the repo
+        run: |
+          ls
+
+      - name: Setup Python
+        uses: actions/setup-python@v3.1.4
+
+      - name: Display python version
+        run: python --version
+
+      - name: List files in tool cache
+        run: |
+          ls ${{ runner.tool_cache }}
+
+      - name: Build web app
+        uses: azure/appservice-build@v2
+
+      - name: Deploy
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: 'development'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }
+
+      - run: echo "This job's status is ${{ job.status }}."
