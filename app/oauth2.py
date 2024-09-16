@@ -6,9 +6,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-# How this file works it creates the token, then to verify it the requests will have a dependency which comes from
-# get_current_token, which returns if this token is ok or not by returning the result from the verify_access_token
-# function
+# Create the token. After verify it the requests will have a dependency which comes from
+# get_current_token,
+# which returns if this token is ok or not by returning the result from the verify_access_token function
 
 # For more information on how all of this works go to: https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
 # For JWT to work we need:
